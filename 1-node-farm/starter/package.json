@@ -15,5 +15,8 @@
     "@types/node": "^17.0.25",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8"
+  },
+  "dependencies": {
+    "slugify": "^1.6.5"
   }
 }
