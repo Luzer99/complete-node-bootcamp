@@ -25,6 +25,6 @@ const server = http.createServer(
   }
 );
 
-server.listen(8000, '127.0.0.1', () => {
-  console.log('Listen to requests on http://localhost:8000');
+server.listen(3000, '127.0.0.1', () => {
+  console.log('Listen to requests on http://localhost:3000');
 });
