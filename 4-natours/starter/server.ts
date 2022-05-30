@@ -6,13 +6,7 @@ import { Tour } from './models/tourModel';
 
 dotenv.config({ path: './config.env' });
 
-(async () => {
-  try {
-    await mongoose.connect(process.env.DATABASE);
-  } catch (err) {
-    console.log(`Something went wrong! ${err.message}`);
-  }
-})();
+mongoose.connect(process.env.DATABASE);
 
 const port = Number(process.env.PORT) || 3000;
 

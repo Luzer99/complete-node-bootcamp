@@ -1,4 +1,6 @@
-export interface TourSchema {
+import mongoose from 'mongoose';
+
+export interface TourDocument extends mongoose.Document {
   name: string;
   duration: number;
   maxGroupSize: number;
@@ -13,6 +15,4 @@ export interface TourSchema {
   images?: string[];
   createdAt: Date | number;
   startDates?: Date;
-  slug?: string;
-  secretTour?: boolean;
 };
