@@ -1,5 +1,15 @@
 import * as express from 'express';
-import { checkBody, createTour, deleteTour, getAllTours, getTour, updateTour, aliasTopTours, getTourStats, getMonthlyPlan } from '../controllers/tourController';
+import {
+  checkBody,
+  createTour,
+  deleteTour,
+  getAllTours,
+  getTour,
+  updateTour,
+  aliasTopTours,
+  getTourStats,
+  getMonthlyPlan,
+} from '../controllers/tourController';
 
 export const tourRouter = express.Router();
 
@@ -17,8 +27,4 @@ tourRouter.route('/monthly-plan/:year').get(getMonthlyPlan);
 
 tourRouter.route('/').get(getAllTours).post(checkBody, createTour);
 
-tourRouter
-  .route('/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
