@@ -1,11 +1,32 @@
 import { ValidationError } from '../utils/error';
-import express from 'express';
+import * as jwt from 'jsonwebtoken';
+import * as express from 'express';
 import mongoose from 'mongoose';
 
 const handleCastErrorDB = (err: mongoose.Error.ValidatorError) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
   return new ValidationError(message, 400);
 };
+
+const handleDuplicateFieldsDB = (err: mongoose.Error.ValidatorError) => {
+  const value = (err as any).errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const message = `Duplicate field value: ${value}. Please use another value!`;
+  return new ValidationError(message, 400);
+};
+
+const handleValidationErrorDB = (err: mongoose.Error.ValidatorError) => {
+  const errors = Object.values((err as any).errors).map(
+    (el: Error) => el.message
+  );
+  const message = `Invalid input data. ${errors.join('. ')}`;
+  return new ValidationError(message, 400);
+};
+
+const handleJsonWebTokenError = (err: jwt.JsonWebTokenError) =>
+  new ValidationError('Invalid token. Plekase log in again!', 401);
+
+const handleTokenExpiredError = (err: jwt.JsonWebTokenError) =>
+  new ValidationError('Your token has expired! Please log in again.', 401);
 
 const sendErrorDev = (err: ValidationError, res: express.Response) => {
   res.status(err.statusCode).json({
@@ -46,8 +67,15 @@ export const handleError = (
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
-    if (err.name === 'CastError') error = handleCastErrorDB(err as any);
-    if (err.code === 11000) error = handleDuplicateFieldsDB(error);
+    if (error.name === 'CastError') error = handleCastErrorDB(error as any);
+    if ((error as any).code === 11000)
+      error = handleDuplicateFieldsDB(error as any);
+    if (error.name === 'ValidationError')
+      error = handleValidationErrorDB(error as any);
+    if (error.name === 'JsonWebTokenError')
+      error = handleJsonWebTokenError(error as any);
+    if (error.name === 'TokenExpiredError')
+      error = handleTokenExpiredError(error as any);
 
     sendErrorProd(error, res);
   }
